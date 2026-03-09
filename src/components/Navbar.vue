@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <nav>
         <div>
             <ul>
                 <li>
@@ -19,5 +19,5 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </nav>
 </template>
