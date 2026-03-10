@@ -24,4 +24,10 @@
     flex: 1;
     padding: 1rem;
   }
+
+  @media (min-width: 768px) {
+    .content {
+      padding: 2rem 4rem;
+    }
+  }
 </style>
