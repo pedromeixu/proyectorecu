@@ -1,11 +1,8 @@
 {
   "empleados": [
     {
-      "id": 1,
-      "nombre": "Ana López",
-      "email": "ana@mail.com",
-      "movil": "600123123",
-      "puesto": "rrhh"
+      "id": "JSXM4GnAKVc"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -23,7 +23,7 @@ export const deleteEmpleado = (id) => {
 
 // Actualizar empleado por ID
 export const updateEmpleado = (id, empleadoActualizado) => {
-    return axios.put(`${API_URL}/${id}`)
+    return axios.put(`${API_URL}/${id}`, empleadoActualizado)
         .then(res => res.data);
 }
 
