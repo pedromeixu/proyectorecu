@@ -21,7 +21,7 @@ export const deleteEmpleado = (id) => {
         .then(res => res.data);
 }
 
-// Actualizar empleado por ID
+// Actualizar empleado por ID>
 export const updateEmpleado = (id, empleadoActualizado) => {
     return axios.put(`${API_URL}/${id}`, empleadoActualizado)
         .then(res => res.data);

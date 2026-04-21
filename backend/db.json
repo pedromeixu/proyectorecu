@@ -1,7 +1,18 @@
 {
   "empleados": [
     {
-      "id": "JSXM4GnAKVc"
+      "nombre": "fwafwafwafwafwafwa",
+      "email": "fwafafaw@gmail.com",
+      "movil": "567743215",
+      "puesto": "contabilidad",
+      "id": "dM6FvqrCH7s"
+    },
+    {
+      "nombre": "fwfwafaw",
+      "email": "fwafwafaw@gmail.com",
+      "movil": "222222222",
+      "puesto": "almacen",
+      "id": "8uHejYwLxUc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
