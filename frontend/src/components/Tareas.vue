@@ -156,7 +156,7 @@ function resetForm() {
     <h2>Gestión de tareas</h2>
 
     <!-- ================= FORMULARIO ================= -->
-    <form class="form" @submit.prevent="addTarea">
+    <form class="form" @submit.prevent="addOrUpdate">
 
       <h3>{{ form.id ? "Editar tarea" : "Nueva tarea" }}</h3>
 
