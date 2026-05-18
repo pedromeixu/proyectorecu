@@ -1,12 +1,13 @@
 {
   "empleados": [
     {
-      "nombre": "fwafwafwafwafwafwa",
+      "nombre": "fwafwafwafwafw",
       "email": "fwafafaw@gmail.com",
       "movil": "567743215",
       "puesto": "contabilidad",
       "id": "dM6FvqrCH7s"
     }
   ],
+  "tareas": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

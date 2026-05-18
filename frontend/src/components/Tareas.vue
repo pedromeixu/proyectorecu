@@ -1,110 +1,154 @@
 <script setup>
-    import { ref, reactive, onMounted } from "vue";
-    import Swal from "sweetalert2";
-    import { getEmpleados } from "../api/apiEmpleados";
+import { ref, reactive, onMounted } from "vue";
+import Swal from "sweetalert2";
 
-    // ESTADOS LOCALES
-    const tareas = ref([]); // array local
-    const empleados = ref([]) // para mostrar nombres
+import { getEmpleados } from "../api/apiEmpleados";
+import {
+  getTareas,
+  addTarea,
+  updateTarea,
+  deleteTarea
+} from "../api/apiTareas";
 
-    // Formulario reactivo
-    const form = reactive({
-        id: null,
-        titulo: "",
-        descripcion: "",
-        estado: "",
-        prioridad: "media",
-        empleadoId: ""
-    })
+// ESTADOS
+const tareas = ref([]);
+const empleados = ref([]);
 
-    // CARGAR EMPLEADOS
-    onMounted(async () => {
-        empleados.value = await getEmpleados();
-    })
+// FORMULARIO
+const form = reactive({
+  id: null,
+  titulo: "",
+  descripcion: "",
+  estado: "",
+  prioridad: "media",
+  empleadoId: "",
+  _empleadoValido: null
+});
 
-    // VALIDAR EMPLEADO POR ID
-    function buscarEmpleado() {
-        const emp = empleados.value.find(e => e.id == form.empleadoId);
+// =========================
+// CARGAR DATOS INICIALES
+// =========================
+onMounted(() => cargarDatos());
 
-        if (!form.empleadoId) {
-            Swal.fire("Error", "Debes introducir un ID", "error");
-            return;
-        }
+async function cargarDatos() {
+  Swal.showLoading();
+  try {
+    empleados.value = await getEmpleados();
+    tareas.value = await getTareas();
+  } catch (e) {
+    Swal.fire("Error", e.message, "error");
+  } finally {
+    Swal.close();
+  }
+}
 
-        if (emp) {
-            form._empleadoValido = true;
-        } else {
-            form._empleadoValido = false;
-            Swal.fire("Empleado no encontrado", "Ese ID no existe", "error");
-            form.empleadoId = "";
-        }
+// =========================
+// VALIDAR EMPLEADO POR ID
+// =========================
+function buscarEmpleado() {
+  if (!form.empleadoId) {
+    Swal.fire("Error", "Debes introducir un ID", "error");
+    return;
+  }
+
+  const emp = empleados.value.find(e => e.id === form.empleadoId);
+
+  if (emp) {
+    form._empleadoValido = true;
+  } else {
+    form._empleadoValido = false;
+    Swal.fire("Empleado no encontrado", "Ese ID no existe", "error");
+    form.empleadoId = "";
+  }
+}
+
+// =========================
+// AÑADIR O EDITAR TAREA
+// =========================
+async function addOrUpdate() {
+  if (!form.titulo) {
+    Swal.fire("Error", "El título es obligatorio", "error");
+    return;
+  }
+  if (!form.estado) {
+    Swal.fire("Error", "El estado es obligatorio", "error");
+    return;
+  }
+  if (!form.empleadoId) {
+    Swal.fire("Error", "El empleado es obligatorio", "error");
+    return;
+  }
+
+  const tareaData = {
+    titulo: form.titulo,
+    descripcion: form.descripcion,
+    estado: form.estado,
+    prioridad: form.prioridad,
+    empleadoId: form.empleadoId
+  };
+
+  Swal.showLoading();
+
+  try {
+    if (form.id === null) {
+      // NUEVA TAREA
+      await addTarea({ ...tareaData, id: crypto.randomUUID() });
+    } else {
+      // EDITAR TAREA
+      await updateTarea(form.id, tareaData);
     }
 
-    // AÑADIR O EDITAR TAREA
-    function addTarea() {
-        if (!form.titulo) {
-            Swal.fire("Error", "El título es obligatorio", "error");
-            return;
-        }
-        if (!form.estado) {
-            Swal.fire("Error", "El estado es obligatorio", "error");
-            return;
-        }
-        if (!form.empleadoId) {
-            Swal.fire("Error", "El empleado es obligatorio", "error");
-            return;
-        }
+    await cargarDatos();
+    resetForm();
+  } catch (e) {
+    Swal.fire("Error", e.message, "error");
+  } finally {
+    Swal.close();
+  }
+}
 
-        if (form.id === null) {
-            // NUEVA TAREA
-            tareas.value.push({
-                id: Date.now(),
-                titulo: form.titulo,
-                descripcion: form.descripcion,
-                estado: form.estado,
-                prioridad: form.prioridad,
-                empleadoId: form.empleadoId
-            });
-        } else {
-            // EDITAR TAREA
-            const t = tareas.value.find(t => t.id === form.id);
-            t.titulo = form.titulo;
-            t.descripcion = form.descripcion;
-            t.estado = form.estado;
-            t.prioridad = form.prioridad;
-            t.empleadoId = form.empleadoId;
-        }
+// =========================
+// CARGAR TAREA EN FORMULARIO
+// =========================
+function selTarea(t) {
+  form.id = t.id;
+  form.titulo = t.titulo;
+  form.descripcion = t.descripcion;
+  form.estado = t.estado;
+  form.prioridad = t.prioridad;
+  form.empleadoId = t.empleadoId;
+  form._empleadoValido = true;
+}
 
-        resetForm();
-    }
+// =========================
+// ELIMINAR TAREA
+// =========================
+async function delTarea(id) {
+  Swal.showLoading();
+  try {
+    await deleteTarea(id);
+    await cargarDatos();
+  } catch (e) {
+    Swal.fire("Error", e.message, "error");
+  } finally {
+    Swal.close();
+  }
+}
 
-    // CARGAR TAREA EN EL FORMULARIO
-    function selTarea(t) {
-        form.id = t.id;
-        form.titulo = t.titulo;
-        form.descripcion = t.descripcion;
-        form.estado = t.estado;
-        form.prioridad = t.prioridad;
-        form.empleadoId = t.empleadoId;
-        form._empleadoValido = true;
-    }
-
-    // ELIMINAR TAREA
-    function delTarea(id) {
-        tareas.value = tareas.value.filter(t => t.id !== id);
-    }
-
-    // RESET FORM
-    function resetForm() {
-        form.id = null;
-        form.titulo = "";
-        form.descripcion = "";
-        form.estado = "";
-        form.prioridad = "media";
-        form.empleadoId = "";
-        form._empleadoValido = null;
-    }
+// =========================
+// RESET FORM
+// =========================
+function resetForm() {
+  form.id = null;
+  form.titulo = "";
+  form.descripcion = "";
+  form.estado = "";
+  form.prioridad = "media";
+  form.empleadoId = "";
+  form._empleadoValido = null;
+}
 </script>
+
 
 <template>
   <div class="tareas">
