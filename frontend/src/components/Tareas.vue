@@ -151,95 +151,111 @@ function resetForm() {
 
 
 <template>
-  <div class="tareas">
+  <div class="tareas container py-4">
 
-    <h2>Gestión de tareas</h2>
+    <h2 class="section-title mb-4">Gestión de tareas</h2>
 
-    <!-- ================= FORMULARIO ================= -->
-    <form class="form" @submit.prevent="addOrUpdate">
+    <!-- FORMULARIO -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body">
 
-      <h3>{{ form.id ? "Editar tarea" : "Nueva tarea" }}</h3>
+        <h3 class="form-title mb-3">
+          {{ form.id ? "Editar tarea" : "Nueva tarea" }}
+        </h3>
 
-      <div class="campo">
-        <label>Título *</label>
-        <input v-model="form.titulo" type="text" class="input-titulo" />
+        <form @submit.prevent="addOrUpdate" class="row g-3">
+
+          <div class="col-12">
+            <label class="form-label fw-semibold">Título *</label>
+            <input v-model="form.titulo" type="text" class="form-control" />
+          </div>
+
+          <div class="col-12">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea v-model="form.descripcion" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Estado *</label>
+            <select v-model="form.estado" class="form-select">
+              <option value="">Seleccione...</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="en_proceso">En proceso</option>
+              <option value="finalizada">Finalizada</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Prioridad</label>
+            <select v-model="form.prioridad" class="form-select">
+              <option value="baja">Baja</option>
+              <option value="media">Media</option>
+              <option value="alta">Alta</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">ID Empleado *</label>
+            <div class="d-flex gap-2">
+              <input
+                v-model="form.empleadoId"
+                type="text"
+                class="form-control"
+                :class="{
+                  'is-valid': form._empleadoValido === true,
+                  'is-invalid': form._empleadoValido === false
+                }"
+              />
+              <button type="button" class="btn btn-outline-secondary" @click="buscarEmpleado">
+                🔎
+              </button>
+            </div>
+          </div>
+
+          <div class="col-12 d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-primary-corp">
+              {{ form.id ? "Guardar" : "Añadir" }}
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary" @click="resetForm">
+              Limpiar
+            </button>
+          </div>
+
+        </form>
+
       </div>
+    </div>
 
-      <div class="campo">
-        <label>Descripción</label>
-        <textarea v-model="form.descripcion" class="input-desc"></textarea>
-      </div>
+    <!-- LISTADO -->
+    <h3 class="section-title mb-3">Listado de tareas</h3>
 
-      <div class="campo">
-        <label>Estado *</label>
-        <select v-model="form.estado" class="input-estado">
-          <option value="">Seleccione...</option>
-          <option value="pendiente">Pendiente</option>
-          <option value="en_proceso">En proceso</option>
-          <option value="finalizada">Finalizada</option>
-        </select>
-      </div>
+    <div class="row g-3">
+      <div class="col-md-4" v-for="t in tareas" :key="t.id">
+        <div class="card tarea-card shadow-sm border-0 h-100" :class="t.estado">
+          <div class="card-body">
 
-      <div class="campo">
-        <label>Prioridad</label>
-        <select v-model="form.prioridad" class="input-prioridad">
-          <option value="baja">Baja</option>
-          <option value="media">Media</option>
-          <option value="alta">Alta</option>
-        </select>
-      </div>
+            <h5 class="card-title text-primary-corp fw-bold">{{ t.titulo }}</h5>
 
-      <div class="campo campo-empleado">
-        <label>ID Empleado *</label>
+            <p class="mb-1"><strong>Descripción:</strong> {{ t.descripcion }}</p>
+            <p class="mb-1"><strong>Estado:</strong> {{ t.estado }}</p>
+            <p class="mb-1"><strong>Prioridad:</strong> {{ t.prioridad }}</p>
 
-        <div class="empleado-busqueda">
-          <input
-            v-model="form.empleadoId"
-            type="text"
-            class="input-empleado"
-            :class="{
-              valido: form._empleadoValido === true,
-              invalido: form._empleadoValido === false
-            }"
-          />
-          <button type="button" class="btn-mini" @click="buscarEmpleado">🔎</button>
-        </div>
-      </div>
+            <p class="mb-2">
+              <strong>Empleado:</strong>
+              {{ empleados.find(e => e.id === t.empleadoId)?.nombre || "Desconocido" }}
+            </p>
 
-      <div class="botonera">
-        <button type="submit" class="btn-primario">
-          {{ form.id ? "Guardar" : "Añadir" }}
-        </button>
-        <button type="button" class="btn-secundario" @click="resetForm">Limpiar</button>
-      </div>
+            <div class="d-flex gap-2 mt-3">
+              <button class="btn btn-sm btn-outline-primary" @click="selTarea(t)">
+                Editar
+              </button>
+              <button class="btn btn-sm btn-danger" @click="delTarea(t.id)">
+                Eliminar
+              </button>
+            </div>
 
-    </form>
-
-    <!-- ================= LISTADO ================= -->
-    <h3>Listado de tareas</h3>
-
-    <div class="lista">
-      <div
-        class="tarea"
-        v-for="t in tareas"
-        :key="t.id"
-        :class="t.estado"
-      >
-        <p class="titulo">{{ t.titulo }}</p>
-        <p class="desc">{{ t.descripcion }}</p>
-        <p class="estado">Estado: {{ t.estado }}</p>
-        <p class="prioridad">Prioridad: {{ t.prioridad }}</p>
-
-        <p class="empleado">
-          Empleado:
-          {{
-            empleados.find(e => e.id === t.empleadoId)?.nombre || "Desconocido"
-          }}
-        </p>
-
-        <div class="acciones">
-          <button class="btn-mini" @click="selTarea(t)">Editar</button>
-          <button class="btn-mini eliminar" @click="delTarea(t.id)">Eliminar</button>
+          </div>
         </div>
       </div>
     </div>
@@ -247,112 +263,36 @@ function resetForm() {
   </div>
 </template>
 
+
 <style scoped>
-.tareas {
-  max-width: 1000px;
-  margin: auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+/* TÍTULOS */
+.section-title {
+  color: #0a3d62;
+  font-weight: 700;
 }
 
-/* FORMULARIO */
-.form {
-  display: grid;
-  gap: 0.6rem;
-  background: #f2f2f2;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  width: fit-content;
-  min-width: 350px;
+.form-title {
+  color: #0a3d62;
+  font-weight: 600;
 }
 
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.input-titulo {
-  width: 260px;
-}
-
-.input-desc {
-  width: 300px;
-  height: 70px;
-}
-
-.input-estado {
-  width: 180px;
-}
-
-.input-prioridad {
-  width: 150px;
-}
-
-.campo-empleado {
-  margin-top: 0.5rem;
-}
-
-.empleado-busqueda {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-}
-
-.input-empleado {
-  width: 100px;
-}
-
-.valido {
-  background: #fff3b0;
-}
-
-.invalido {
-  background: #ffb3b3;
-}
-
-.botonera {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.btn-primario,
-.btn-secundario {
-  padding: 0.35rem 0.8rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  border-radius: 6px;
-  border: none;
-}
-
-.btn-primario {
-  background: #3498db;
+/* BOTÓN AZUL CLARO CORPORATIVO */
+.btn-primary-corp {
+  background-color: #4da3ff;
+  border-color: #4da3ff;
+  font-weight: 600;
   color: white;
+  transition: 0.2s ease;
 }
 
-.btn-secundario {
-  background: #ccc;
+.btn-primary-corp:hover {
+  background-color: #1e90ff;
+  border-color: #1e90ff;
 }
 
-/* LISTADO */
-.lista {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 1rem;
-}
-
-.tarea {
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: white;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+/* TARJETAS DE TAREAS */
+.tarea-card {
+  border-radius: 10px;
 }
 
 /* COLORES POR ESTADO */
@@ -368,28 +308,8 @@ function resetForm() {
   border-left: 6px solid #2ecc71;
 }
 
-.titulo {
-  font-weight: bold;
+/* TEXTO DE TÍTULO DE TAREA */
+.card-title {
   font-size: 1.1rem;
-}
-
-.acciones {
-  margin-top: 0.5rem;
-  display: flex;
-  gap: 0.4rem;
-}
-
-.btn-mini {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  background: #eee;
-}
-
-.eliminar {
-  background: #c0392b;
-  color: white;
 }
 </style>

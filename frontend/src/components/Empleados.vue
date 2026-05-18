@@ -108,65 +108,86 @@ async function delEmpleado(id) {
 </script>
 
 <template>
-  <div class="empleados">
+  <div class="empleados container py-4">
 
-    <h2>Gestión de empleados</h2>
+    <h2 class="section-title mb-4">Gestión de empleados</h2>
 
-    <form class="form" @submit.prevent="addOrUpdate">
-      <h3>{{ form.id ? "Editar empleado" : "Nuevo empleado" }}</h3>
+    <!-- FORMULARIO -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body">
 
-      <div class="campo">
-        <label>Nombre *</label>
-        <input v-model="form.nombre" type="text" class="input-nombre" />
+        <h3 class="form-title mb-3">
+          {{ form.id ? "Editar empleado" : "Nuevo empleado" }}
+        </h3>
+
+        <form @submit.prevent="addOrUpdate" class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nombre *</label>
+            <input v-model="form.nombre" type="text" class="form-control" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Email *</label>
+            <input v-model="form.email" type="email" class="form-control" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Móvil</label>
+            <input v-model="form.movil" type="text" class="form-control" />
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Puesto</label>
+            <select v-model="form.puesto" class="form-select">
+              <option value="rrhh">RRHH</option>
+              <option value="contabilidad">Contabilidad</option>
+              <option value="almacen">Almacén</option>
+              <option value="ventas">Ventas</option>
+            </select>
+          </div>
+
+          <div class="col-12 d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-primary-corp">
+              {{ form.id ? "Guardar" : "Añadir" }}
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary" @click="resetForm">
+              Limpiar
+            </button>
+          </div>
+
+        </form>
+
       </div>
+    </div>
 
-      <div class="campo">
-        <label>Email *</label>
-        <input v-model="form.email" type="email" class="input-email" />
-      </div>
-
-      <div class="campo">
-        <label>Móvil</label>
-        <input v-model="form.movil" type="text" class="input-movil" />
-      </div>
-
-      <div class="campo">
-        <label>Puesto</label>
-        <select v-model="form.puesto" class="input-puesto">
-          <option value="rrhh">RRHH</option>
-          <option value="contabilidad">Contabilidad</option>
-          <option value="almacen">Almacén</option>
-          <option value="ventas">Ventas</option>
-        </select>
-      </div>
-
-      <p class="error" v-if="error">{{ error }}</p>
-
-      <div class="botonera">
-        <button type="submit" class="btn-primario">
-          {{ form.id ? "Guardar" : "Añadir" }}
-        </button>
-
-        <button type="button" class="btn-secundario" @click="resetForm">
-          Limpiar
-        </button>
-      </div>
-    </form>
-
-    <h3>Listado</h3>
+    <!-- LISTADO -->
+    <h3 class="section-title mb-3">Listado</h3>
 
     <p v-if="cargando">Cargando...</p>
 
-    <div class="lista" v-else>
-      <div class="empleado" v-for="emp in empleados" :key="emp.id">
-        <p class="nombre">{{ emp.nombre }}</p>
-        <p class="email">{{ emp.email }}</p>
-        <p class="movil">{{ emp.movil }}</p>
-        <p class="puesto">Puesto: {{ emp.puesto }}</p>
+    <div v-else class="row g-3">
+      <div class="col-md-4" v-for="emp in empleados" :key="emp.id">
+        <div class="card empleado-card shadow-sm border-0 h-100">
+          <div class="card-body">
 
-        <div class="acciones">
-          <button class="btn-mini" @click="selEmpleado(emp)">Editar</button>
-          <button class="btn-mini eliminar" @click="delEmpleado(emp.id)">Eliminar</button>
+            <h5 class="card-title text-primary-corp fw-bold">{{ emp.nombre }}</h5>
+
+            <p class="mb-1"><strong>Email:</strong> {{ emp.email }}</p>
+            <p class="mb-1"><strong>Móvil:</strong> {{ emp.movil }}</p>
+            <p class="mb-2"><strong>Puesto:</strong> {{ emp.puesto }}</p>
+
+            <div class="d-flex gap-2 mt-3">
+              <button class="btn btn-sm btn-outline-primary" @click="selEmpleado(emp)">
+                Editar
+              </button>
+              <button class="btn btn-sm btn-danger" @click="delEmpleado(emp.id)">
+                Eliminar
+              </button>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
@@ -174,120 +195,31 @@ async function delEmpleado(id) {
   </div>
 </template>
 
+
 <style scoped>
-  .empleados {
-    max-width: 1000px;
-    margin: auto;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
+.section-title {
+  color: #0a3d62;
+  font-weight: 700;
+}
 
-  /* FORMULARIO */
-  .form {
-    display: grid;
-    gap: 0.6rem;
-    background: #f2f2f2;
-    padding: 0.8rem 1rem;     /* antes era más grande */
-    border-radius: 8px;
-    border: 1px solid #ddd;
+.btn-primary-corp {
+  background-color: #4da3ff;
+  border-color: #4da3ff;
+  font-weight: 600;
+  color: white;
+}
 
-    /* Hace que el fondo gris se adapte al contenido */
-    width: fit-content;
-    min-width: 320px;         /* evita que quede demasiado estrecho */
-  }
+.btn-primary-corp:hover {
+  background-color: #1e90ff;
+  border-color: #08324f;
+}
 
-  .campo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
+.empleado-card {
+  border-radius: 10px;
+}
 
-  .input-nombre {
-    width: 250px;
-  }
-
-  .input-email {
-    width: 280px;
-  }
-
-  .input-movil {
-    width: 150px;
-  }
-
-  .input-puesto {
-    width: 180px;
-  }
-
-  .botonera {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-
-  .btn-primario,
-  .btn-secundario {
-    padding: 0.35rem 0.8rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border-radius: 6px;
-    border: none;
-  }
-
-  .btn-primario {
-    background: #3498db;
-    color: white;
-  }
-
-  .btn-secundario {
-    background: #ccc;
-  }
-
-  /* LISTADO */
-  .lista {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 1rem;
-  }
-
-  .empleado {
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background: white;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .nombre {
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
-
-  .acciones {
-    margin-top: 0.5rem;
-    display: flex;
-    gap: 0.4rem;
-  }
-
-  .btn-mini {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.8rem;
-    cursor: pointer;
-    border-radius: 5px;
-    border: none;
-    background: #eee;
-  }
-
-  .eliminar {
-    background: #c0392b;
-    color: white;
-  }
-
-  .error {
-    color: red;
-    font-size: 0.9rem;
-  }
+.form-title {
+  color: #0a3d62;
+  font-weight: 600;
+}
 </style>

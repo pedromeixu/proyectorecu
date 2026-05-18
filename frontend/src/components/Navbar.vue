@@ -1,33 +1,75 @@
 <template>
-    <nav class="navbar">
-        <ul>
-            <li><router-link to="/" class="nav-link">Inicio</router-link></li>
-            <li><router-link to="/empleados" class="nav-link">Empleados</router-link></li>
-            <li><router-link to="/tareas" class="nav-link">Tareas</router-link></li>
-            <li><router-link to="/estadisticas" class="nav-link">Estadísticas</router-link></li>
-            <li><router-link to="/about" class="nav-link">Sobre nosotros</router-link></li>
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3">
+    <div class="container">
+
+      <!-- Marca -->
+      <RouterLink to="/" class="navbar-brand fw-bold text-primary-corp">
+        Mi Empresa
+      </RouterLink>
+
+      <!-- Botón móvil -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navMenu"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Enlaces -->
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-3">
+
+          <li class="nav-item">
+            <RouterLink to="/" class="nav-link">Inicio</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink to="/empleados" class="nav-link">Empleados</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink to="/tareas" class="nav-link">Tareas</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink to="/estadisticas" class="nav-link">Estadísticas</RouterLink>
+          </li>
+
+          <li class="nav-item">
+            <RouterLink to="/about" class="nav-link">Sobre nosotros</RouterLink>
+          </li>
+
         </ul>
-    </nav>
+      </div>
+
+    </div>
+  </nav>
 </template>
+
 <style scoped>
-    .navbar {
-        background: #222;
-        padding: 1rem;
-    }
+/* Color corporativo */
+.text-primary-corp {
+  color: #0a3d62 !important;
+}
 
-    ul {
-        display: flex;
-        gap: 1rem;
-        list-style: none;
-    }
+/* Enlaces */
+.nav-link {
+  font-weight: 500;
+  color: #222 !important;
+  transition: 0.2s ease;
+}
 
-    a {
-        color: white;
-        text-decoration: none;
-    }
+.nav-link:hover {
+  color: #0a3d62 !important;
+}
 
-    a.router-link-active {
-        font-weight: bold;
-        text-decoration: underline;
-    }
+/* Activo */
+.router-link-active {
+  font-weight: 600;
+  color: #0a3d62 !important;
+  border-bottom: 2px solid #0a3d62;
+  padding-bottom: 2px;
+}
 </style>

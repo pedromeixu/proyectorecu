@@ -1,14 +1,20 @@
 <template>
-    <footer class="footer">
-        <p>Footer</p>
-    </footer>
+  <footer class="footer bg-white border-top py-3">
+    <p class="m-0 text-muted small">
+      © {{ new Date().getFullYear() }} Mi Empresa — Todos los derechos reservados
+    </p>
+  </footer>
 </template>
 
 <style scoped>
-    .footer {
-        background: #222;
-        color: white;
-        text-align: center;
-        padding: 1rem;
-    }
+.footer {
+  text-align: center;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Azul corporativo para detalles si lo necesitas */
+.text-primary-corp {
+  color: #0a3d62;
+}
 </style>
