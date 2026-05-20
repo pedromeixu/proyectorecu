@@ -1,110 +1,135 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import Swal from "sweetalert2";
-import {
-  getEmpleados,
-  addEmpleado,
-  deleteEmpleado,
-  updateEmpleado
-} from "../api/apiEmpleados";
+  import { ref, reactive, onMounted } from "vue";
+  import Swal from "sweetalert2";
+  import jsPDF from "jspdf";
+  import autoTable from "jspdf-autotable";
+  import {
+    getEmpleados,
+    addEmpleado,
+    deleteEmpleado,
+    updateEmpleado
+  } from "../api/apiEmpleados";
 
-// Lista reactiva
-const empleados = ref([]);
+  // Lista reactiva
+  const empleados = ref([]);
 
-// Formulario Reactivo
-const form = reactive({
-  id: null,
-  nombre: "",
-  email: "",
-  movil: "",
-  puesto: "rrhh"
-});
+  // Formulario Reactivo
+  const form = reactive({
+    id: null,
+    nombre: "",
+    email: "",
+    movil: "",
+    puesto: "rrhh"
+  });
 
-// Estado
-const cargando = ref(false);
+  // Estado
+  const cargando = ref(false);
 
-// Cargar empleados al iniciar
-onMounted(() => cargarEmpleados());
+  // Cargar empleados al iniciar
+  onMounted(() => cargarEmpleados());
 
-async function cargarEmpleados() {
-  cargando.value = true;
-  Swal.showLoading();
+  async function cargarEmpleados() {
+    cargando.value = true;
+    Swal.showLoading();
 
-  try {
-    empleados.value = await getEmpleados();
-  } catch (e) {
-    Swal.fire("Error", e.message, "error");
-  } finally {
-    cargando.value = false;
-    Swal.close();
-  }
-}
-
-// Seleccionar empleado para editar
-function selEmpleado(emp) {
-  form.id = emp.id;
-  form.nombre = emp.nombre;
-  form.email = emp.email;
-  form.movil = emp.movil;
-  form.puesto = emp.puesto;
-}
-
-// Resetear formulario
-function resetForm() {
-  form.id = null;
-  form.nombre = "";
-  form.email = "";
-  form.movil = "";
-  form.puesto = "rrhh";
-}
-
-// Añadir o actualizar empleado
-async function addOrUpdate() {
-  if (!form.nombre || !form.email) {
-    Swal.fire("Error", "Nombre y email son obligatorios", "error");
-    return;
+    try {
+      empleados.value = await getEmpleados();
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      cargando.value = false;
+      Swal.close();
+    }
   }
 
-  const empleadoData = {
-    nombre: form.nombre,
-    email: form.email,
-    movil: form.movil,
-    puesto: form.puesto
-  };
+  // Seleccionar empleado para editar
+  function selEmpleado(emp) {
+    form.id = emp.id;
+    form.nombre = emp.nombre;
+    form.email = emp.email;
+    form.movil = emp.movil;
+    form.puesto = emp.puesto;
+  }
 
-  Swal.showLoading();
+  // Resetear formulario
+  function resetForm() {
+    form.id = null;
+    form.nombre = "";
+    form.email = "";
+    form.movil = "";
+    form.puesto = "rrhh";
+  }
 
-  try {
-    if (form.id === null) {
-      // Crear nuevo empleado con ID string
-      await addEmpleado({ ...empleadoData, id: crypto.randomUUID() });
-    } else {
-      // Actualizar empleado existente
-      await updateEmpleado(form.id, empleadoData);
+  // Añadir o actualizar empleado
+  async function addOrUpdate() {
+    if (!form.nombre || !form.email) {
+      Swal.fire("Error", "Nombre y email son obligatorios", "error");
+      return;
     }
 
-    await cargarEmpleados();
-    resetForm();
-  } catch (e) {
-    Swal.fire("Error", e.message, "error");
-  } finally {
-    Swal.close();
-  }
-}
+    const empleadoData = {
+      nombre: form.nombre,
+      email: form.email,
+      movil: form.movil,
+      puesto: form.puesto
+    };
 
-// Eliminar empleado
-async function delEmpleado(id) {
-  Swal.showLoading();
+    Swal.showLoading();
 
-  try {
-    await deleteEmpleado(id);
-    await cargarEmpleados();
-  } catch (e) {
-    Swal.fire("Error", e.message, "error");
-  } finally {
-    Swal.close();
+    try {
+      if (form.id === null) {
+        // Crear nuevo empleado con ID string
+        await addEmpleado({ ...empleadoData, id: crypto.randomUUID() });
+      } else {
+        // Actualizar empleado existente
+        await updateEmpleado(form.id, empleadoData);
+      }
+
+      await cargarEmpleados();
+      resetForm();
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      Swal.close();
+    }
   }
-}
+
+  // Eliminar empleado
+  async function delEmpleado(id) {
+    Swal.showLoading();
+
+    try {
+      await deleteEmpleado(id);
+      await cargarEmpleados();
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      Swal.close();
+    }
+  }
+
+  function generarPDF(titulo, columnas, filas) {
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text(titulo, 14, 15);
+
+    autoTable(doc, {
+      startY: 25,
+      head: [columnas],
+      body: filas
+    });
+
+    doc.save(`${titulo}.pdf`);
+  }
+
+  function pdfEmpleados() {
+    const columnas = ["ID", "Nombre", "Email", "Móvil"];
+    const filas = empleados.value.map(e => [e.id, e.nombre, e.email, e.movil]);
+
+    generarPDF("Lista de Empleados", columnas, filas);
+  }
+
 </script>
 
 <template>
@@ -164,6 +189,13 @@ async function delEmpleado(id) {
 
     <!-- LISTADO -->
     <h3 class="section-title mb-3">Listado</h3>
+
+    <!-- BOTÓN PDF -->
+    <div class="d-flex justify-content-end mb-3">
+      <button class="btn btn-primary-corp" @click="pdfEmpleados">
+        📄 Exportar PDF
+      </button>
+    </div>
 
     <p v-if="cargando">Cargando...</p>
 
