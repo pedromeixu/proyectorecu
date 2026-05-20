@@ -1,152 +1,202 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import Swal from "sweetalert2";
+  import { ref, reactive, onMounted } from "vue";
+  import Swal from "sweetalert2";
+  import jsPDF from "jspdf";
+  import autoTable from "jspdf-autotable";
+  import { getEmpleados } from "../api/apiEmpleados";
+  import {
+    getTareas,
+    addTarea,
+    updateTarea,
+    deleteTarea
+  } from "../api/apiTareas";
 
-import { getEmpleados } from "../api/apiEmpleados";
-import {
-  getTareas,
-  addTarea,
-  updateTarea,
-  deleteTarea
-} from "../api/apiTareas";
+  // ESTADOS
+  const tareas = ref([]);
+  const empleados = ref([]);
 
-// ESTADOS
-const tareas = ref([]);
-const empleados = ref([]);
+  // FORMULARIO
+  const form = reactive({
+    id: null,
+    titulo: "",
+    descripcion: "",
+    estado: "",
+    prioridad: "media",
+    empleadoId: "",
+    _empleadoValido: null
+  });
 
-// FORMULARIO
-const form = reactive({
-  id: null,
-  titulo: "",
-  descripcion: "",
-  estado: "",
-  prioridad: "media",
-  empleadoId: "",
-  _empleadoValido: null
-});
+  // =========================
+  // CARGAR DATOS INICIALES
+  // =========================
+  onMounted(() => cargarDatos());
 
-// =========================
-// CARGAR DATOS INICIALES
-// =========================
-onMounted(() => cargarDatos());
-
-async function cargarDatos() {
-  Swal.showLoading();
-  try {
-    empleados.value = await getEmpleados();
-    tareas.value = await getTareas();
-  } catch (e) {
-    Swal.fire("Error", e.message, "error");
-  } finally {
-    Swal.close();
-  }
-}
-
-// =========================
-// VALIDAR EMPLEADO POR ID
-// =========================
-function buscarEmpleado() {
-  if (!form.empleadoId) {
-    Swal.fire("Error", "Debes introducir un ID", "error");
-    return;
+  async function cargarDatos() {
+    Swal.showLoading();
+    try {
+      empleados.value = await getEmpleados();
+      tareas.value = await getTareas();
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      Swal.close();
+    }
   }
 
-  const emp = empleados.value.find(e => e.id === form.empleadoId);
-
-  if (emp) {
-    form._empleadoValido = true;
-  } else {
-    form._empleadoValido = false;
-    Swal.fire("Empleado no encontrado", "Ese ID no existe", "error");
-    form.empleadoId = "";
-  }
-}
-
-// =========================
-// AÑADIR O EDITAR TAREA
-// =========================
-async function addOrUpdate() {
-  if (!form.titulo) {
-    Swal.fire("Error", "El título es obligatorio", "error");
-    return;
-  }
-  if (!form.estado) {
-    Swal.fire("Error", "El estado es obligatorio", "error");
-    return;
-  }
-  if (!form.empleadoId) {
-    Swal.fire("Error", "El empleado es obligatorio", "error");
-    return;
-  }
-
-  const tareaData = {
-    titulo: form.titulo,
-    descripcion: form.descripcion,
-    estado: form.estado,
-    prioridad: form.prioridad,
-    empleadoId: form.empleadoId
-  };
-
-  Swal.showLoading();
-
-  try {
-    if (form.id === null) {
-      // NUEVA TAREA
-      await addTarea({ ...tareaData, id: crypto.randomUUID() });
-    } else {
-      // EDITAR TAREA
-      await updateTarea(form.id, tareaData);
+  // =========================
+  // VALIDAR EMPLEADO POR ID
+  // =========================
+  function buscarEmpleado() {
+    if (!form.empleadoId) {
+      Swal.fire("Error", "Debes introducir un ID", "error");
+      return;
     }
 
-    await cargarDatos();
-    resetForm();
-  } catch (e) {
-    Swal.fire("Error", e.message, "error");
-  } finally {
-    Swal.close();
+    const emp = empleados.value.find(e => e.id === form.empleadoId);
+
+    if (emp) {
+      form._empleadoValido = true;
+    } else {
+      form._empleadoValido = false;
+      Swal.fire("Empleado no encontrado", "Ese ID no existe", "error");
+      form.empleadoId = "";
+    }
   }
-}
 
-// =========================
-// CARGAR TAREA EN FORMULARIO
-// =========================
-function selTarea(t) {
-  form.id = t.id;
-  form.titulo = t.titulo;
-  form.descripcion = t.descripcion;
-  form.estado = t.estado;
-  form.prioridad = t.prioridad;
-  form.empleadoId = t.empleadoId;
-  form._empleadoValido = true;
-}
+  // =========================
+  // AÑADIR O EDITAR TAREA
+  // =========================
+  async function addOrUpdate() {
+    if (!form.titulo) {
+      Swal.fire("Error", "El título es obligatorio", "error");
+      return;
+    }
+    if (!form.estado) {
+      Swal.fire("Error", "El estado es obligatorio", "error");
+      return;
+    }
+    if (!form.empleadoId) {
+      Swal.fire("Error", "El empleado es obligatorio", "error");
+      return;
+    }
 
-// =========================
-// ELIMINAR TAREA
-// =========================
-async function delTarea(id) {
-  Swal.showLoading();
-  try {
-    await deleteTarea(id);
-    await cargarDatos();
-  } catch (e) {
-    Swal.fire("Error", e.message, "error");
-  } finally {
-    Swal.close();
+    const tareaData = {
+      titulo: form.titulo,
+      descripcion: form.descripcion,
+      estado: form.estado,
+      prioridad: form.prioridad,
+      empleadoId: form.empleadoId
+    };
+
+    Swal.showLoading();
+
+    try {
+      if (form.id === null) {
+        // NUEVA TAREA
+        await addTarea({ ...tareaData, id: crypto.randomUUID() });
+      } else {
+        // EDITAR TAREA
+        await updateTarea(form.id, tareaData);
+      }
+
+      await cargarDatos();
+      resetForm();
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      Swal.close();
+    }
   }
-}
 
-// =========================
-// RESET FORM
-// =========================
-function resetForm() {
-  form.id = null;
-  form.titulo = "";
-  form.descripcion = "";
-  form.estado = "";
-  form.prioridad = "media";
-  form.empleadoId = "";
-  form._empleadoValido = null;
-}
+  // =========================
+  // CARGAR TAREA EN FORMULARIO
+  // =========================
+  function selTarea(t) {
+    form.id = t.id;
+    form.titulo = t.titulo;
+    form.descripcion = t.descripcion;
+    form.estado = t.estado;
+    form.prioridad = t.prioridad;
+    form.empleadoId = t.empleadoId;
+    form._empleadoValido = true;
+  }
+
+  // =========================
+  // ELIMINAR TAREA
+  // =========================
+  async function delTarea(id) {
+    Swal.showLoading();
+    try {
+      await deleteTarea(id);
+      await cargarDatos();
+    } catch (e) {
+      Swal.fire("Error", e.message, "error");
+    } finally {
+      Swal.close();
+    }
+  }
+
+  // =========================
+  // RESET FORM
+  // =========================
+  function resetForm() {
+    form.id = null;
+    form.titulo = "";
+    form.descripcion = "";
+    form.estado = "";
+    form.prioridad = "media";
+    form.empleadoId = "";
+    form._empleadoValido = null;
+  }
+
+  function generarPDF(titulo, columnas, filas) {
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text(titulo, 14, 15);
+
+    autoTable(doc, {
+      startY: 25,
+      head: [columnas],
+      body: filas
+    });
+
+    doc.save(`${titulo}.pdf`);
+  }
+
+  function pdfTareasOrdenadas() {
+    const columnas = ["ID", "Título", "Prioridad", "Estado", "UsuarioId"];
+
+    // Orden personalizado: alta → media → baja
+    const prioridadOrden = { alta: 1, media: 2, baja: 3 };
+
+    const filas = tareas.value
+      .slice() // copiamos para no mutar el array original
+      .sort((a, b) => prioridadOrden[a.prioridad] - prioridadOrden[b.prioridad])
+      .map(t => [
+        t.id,
+        t.titulo,
+        t.prioridad,
+        t.estado,
+        t.empleadoId
+      ]);
+
+    generarPDF("Tareas Ordenadas por Prioridad", columnas, filas);
+  }
+
+  function pdfTareasEmpleado(empleadoId) {
+    const filtradas = tareas.value.filter(t => t.empleadoId === empleadoId);
+
+    const columnas = ["ID", "Título", "Prioridad", "Estado"];
+    const filas = filtradas.map(t => [
+      t.id,
+      t.titulo,
+      t.prioridad,
+      t.estado
+    ]);
+
+    generarPDF(`Tareas del Empleado ${empleadoId}`, columnas, filas);
+  }
 </script>
 
 
@@ -229,6 +279,17 @@ function resetForm() {
 
     <!-- LISTADO -->
     <h3 class="section-title mb-3">Listado de tareas</h3>
+
+    <!-- BOTONES PDF -->
+    <div class="d-flex justify-content-end gap-2 mb-3">
+      <button class="btn btn-primary-corp" @click="pdfTareasOrdenadas">
+        📄 Exportar todas
+      </button>
+
+      <button class="btn btn-outline-secondary" @click="pdfTareasEmpleado(form.empleadoId)">
+        👤 Exportar por empleado
+      </button>
+    </div>
 
     <div class="row g-3">
       <div class="col-md-4" v-for="t in tareas" :key="t.id">
