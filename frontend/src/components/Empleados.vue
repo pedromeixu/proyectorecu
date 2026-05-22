@@ -229,29 +229,29 @@
 
 
 <style scoped>
-.section-title {
-  color: #0a3d62;
-  font-weight: 700;
-}
+  .section-title {
+    color: #0a3d62;
+    font-weight: 700;
+  }
 
-.btn-primary-corp {
-  background-color: #4da3ff;
-  border-color: #4da3ff;
-  font-weight: 600;
-  color: white;
-}
+  .btn-primary-corp {
+    background-color: #4da3ff;
+    border-color: #4da3ff;
+    font-weight: 600;
+    color: white;
+  }
 
-.btn-primary-corp:hover {
-  background-color: #1e90ff;
-  border-color: #08324f;
-}
+  .btn-primary-corp:hover {
+    background-color: #1e90ff;
+    border-color: #08324f;
+  }
 
-.empleado-card {
-  border-radius: 10px;
-}
+  .empleado-card {
+    border-radius: 10px;
+  }
 
-.form-title {
-  color: #0a3d62;
-  font-weight: 600;
-}
+  .form-title {
+    color: #0a3d62;
+    font-weight: 600;
+  }
 </style>

@@ -185,6 +185,8 @@
   }
 
   function pdfTareasEmpleado(empleadoId) {
+    const empleado = empleados.value.find(e => e.id === empleadoId);
+    const nombreEmpleado = empleado ? empleado.nombre : "Empleado desconocido";
     const filtradas = tareas.value.filter(t => t.empleadoId === empleadoId);
 
     const columnas = ["ID", "Título", "Prioridad", "Estado"];
@@ -195,7 +197,7 @@
       t.estado
     ]);
 
-    generarPDF(`Tareas del Empleado ${empleadoId}`, columnas, filas);
+    generarPDF(`Tareas del Empleado ${nombreEmpleado}`, columnas, filas);
   }
 </script>
 
