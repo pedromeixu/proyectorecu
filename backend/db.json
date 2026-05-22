@@ -23,6 +23,30 @@
       "prioridad": "baja",
       "empleadoId": "iyyrIc9zCyY",
       "id": "jXOnIkSUSik"
+    },
+    {
+      "titulo": "atender problemas rrhh",
+      "descripcion": "resolver los problemas de recursos",
+      "estado": "en_proceso",
+      "prioridad": "alta",
+      "empleadoId": "iyyrIc9zCyY",
+      "id": "x6U49xheUoA"
+    },
+    {
+      "titulo": "problema en sala de máquinas",
+      "descripcion": "solucionar errores de ordenadores",
+      "estado": "pendiente",
+      "prioridad": "alta",
+      "empleadoId": "nno8I8PcJdc",
+      "id": "j8sZtwfSu6Y"
+    },
+    {
+      "titulo": "contable",
+      "descripcion": "contratar a un contable",
+      "estado": "finalizada",
+      "prioridad": "media",
+      "empleadoId": "nno8I8PcJdc",
+      "id": "TnTmXcNTlBQ"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

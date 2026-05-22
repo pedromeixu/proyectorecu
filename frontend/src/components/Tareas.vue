@@ -173,13 +173,18 @@
     const filas = tareas.value
       .slice() // copiamos para no mutar el array original
       .sort((a, b) => prioridadOrden[a.prioridad] - prioridadOrden[b.prioridad])
-      .map(t => [
-        t.id,
-        t.titulo,
-        t.prioridad,
-        t.estado,
-        t.empleadoId
-      ]);
+      .map(t => {
+        const empleado = empleados.value.find(e => e.id === t.empleadoId);
+        const nombreEmpleado = empleado ? empleado.nombre : "Empleado desconocido";
+
+        return [
+          t.id,
+          t.titulo,
+          t.prioridad,
+          t.estado,
+          nombreEmpleado
+        ];
+      });
 
     generarPDF("Tareas Ordenadas por Prioridad", columnas, filas);
   }
