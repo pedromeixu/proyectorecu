@@ -23,6 +23,9 @@
     estado: "",
     prioridad: "media",
     empleadoId: "",
+    horas: 0,
+    precioHora: 0,
+    total: 0,
     _empleadoValido: null
   });
 
@@ -269,6 +272,28 @@
             </div>
           </div>
 
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Horas *</label>
+            <input
+              v-model="form.horas"
+              type="number"
+              min="0"
+              step="0.5"
+              class="form-control"
+            ></input>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Precio/Hora (€)</label>
+            <input
+              v-model="form.precioHora"
+              type="number"
+              min="0"
+              step="0.5"
+              class="form-control"
+            ></input>
+          </div>
+          
           <div class="col-12 d-flex gap-2 mt-3">
             <button type="submit" class="btn btn-primary-corp">
               {{ form.id ? "Guardar" : "Añadir" }}
