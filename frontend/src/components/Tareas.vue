@@ -88,7 +88,10 @@
       descripcion: form.descripcion,
       estado: form.estado,
       prioridad: form.prioridad,
-      empleadoId: form.empleadoId
+      empleadoId: form.empleadoId,
+      horas: Number(form.horas),
+      precioHora: Number(form.precioHora),
+      total: Number(form.horas) * Number(form.precioHora)
     };
 
     Swal.showLoading();
@@ -121,6 +124,9 @@
     form.estado = t.estado;
     form.prioridad = t.prioridad;
     form.empleadoId = t.empleadoId;
+    form.horas = t.horas;
+    form.precioHora = t.precioHora;
+    form.total = t.total;
     form._empleadoValido = true;
   }
 
@@ -149,6 +155,9 @@
     form.estado = "";
     form.prioridad = "media";
     form.empleadoId = "";
+    form.horas = 0;
+    form.precioHora = 0;
+    form.total = 0;
     form._empleadoValido = null;
   }
 
@@ -293,7 +302,7 @@
               class="form-control"
             ></input>
           </div>
-          
+
           <div class="col-12 d-flex gap-2 mt-3">
             <button type="submit" class="btn btn-primary-corp">
               {{ form.id ? "Guardar" : "Añadir" }}
