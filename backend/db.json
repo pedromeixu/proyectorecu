@@ -49,5 +49,6 @@
       "id": "TnTmXcNTlBQ"
     }
   ],
+  "facturas": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
