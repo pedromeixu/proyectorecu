@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Stripe / environment secrets
+backend/stripe-server/.env
