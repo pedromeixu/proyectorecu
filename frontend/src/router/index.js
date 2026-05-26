@@ -3,6 +3,9 @@ import Empleados from "../components/Empleados.vue"
 import Estadisticas from "../components/Estadisticas.vue"
 import Inicio from "../components/Inicio.vue"
 import Tareas from "../components/Tareas.vue"
+import Facturas from "../components/Facturas.vue"
+import Success from "../components/Success.vue"
+import Cancel from "../components/Cancel.vue"
 import { createRouter, createWebHistory } from "vue-router"
 
 const routes = [
@@ -22,9 +25,25 @@ const routes = [
         component: Tareas
     },
     {
+        path: "/facturas",
+        name: "Facturas",
+        component: Facturas
+    },
+    
+    {
         path: "/estadisticas",
         name: "Estadisticas",
         component: Estadisticas
+    },
+    {
+        path: "/success",
+        name: "Success",
+        component: Success
+    },
+    {
+        path: "/cancel",
+        name: "Cancel",
+        component: Cancel
     },
     {
         path: "/about",

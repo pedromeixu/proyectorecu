@@ -34,6 +34,10 @@
           </li>
 
           <li class="nav-item">
+            <RouterLink to="/facturas" class="nav-link">Facturas</RouterLink>
+          </li>
+
+          <li class="nav-item">
             <RouterLink to="/estadisticas" class="nav-link">Estadísticas</RouterLink>
           </li>
 

@@ -47,8 +47,36 @@
       "prioridad": "media",
       "empleadoId": "nno8I8PcJdc",
       "id": "TnTmXcNTlBQ"
+    },
+    {
+      "titulo": "prueba Stripe",
+      "descripcion": "afwwafwafwa",
+      "estado": "finalizada",
+      "prioridad": "alta",
+      "empleadoId": "nno8I8PcJdc",
+      "horas": 2,
+      "precioHora": 7,
+      "total": 14,
+      "id": "wnmjtWK1wPU"
     }
   ],
-  "facturas": [],
+  "facturas": [
+    {
+      "id": "ErMfKcLFUm8",
+      "codigo": "F-2026-002",
+      "clienteId": "nno8I8PcJdc",
+      "fecha": "2026-05-26",
+      "tareas": [
+        {
+          "id": "wnmjtWK1wPU",
+          "titulo": "prueba Stripe",
+          "horas": 2,
+          "precioHora": 7,
+          "total": 14
+        }
+      ],
+      "totalFactura": 14
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

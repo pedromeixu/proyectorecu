@@ -2,9 +2,10 @@
   "name": "proyectorecu",
   "version": "1.0.0",
   "scripts": {
-    "start": "concurrently \"npm run json-server\" \"npm run dev\"",
+    "start": "concurrently \"npm run json-server\" \"npm run dev\" \"npm run stripe\"",
     "json-server": "cd backend && npx json-server --watch db.json --port 3000",
-    "dev": "cd frontend && npm run dev"
+    "dev": "cd frontend && npm run dev",
+    "stripe": "node backend/stripe-server/server.js"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
